@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This module sends a request to a URL and handles HTTP error codes."""
+"""This module sends a request to a URL and prints the body or HTTP error."""
 import urllib.request
 import urllib.error
 import sys
