@@ -121,6 +121,108 @@ class TestRectangle(unittest.TestCase):
         self.assertIn('x', d)
         self.assertIn('y', d)
 
+    def test_width_zero(self):
+        """Tests ValueError for width = 0."""
+        with self.assertRaises(ValueError):
+            Rectangle(0, 2)
+
+    def test_height_zero(self):
+        """Tests ValueError for height = 0."""
+        with self.assertRaises(ValueError):
+            Rectangle(1, 0)
+
+    def test_display_no_x_y(self):
+        """Tests display without x and y."""
+        r = Rectangle(2, 2)
+        from io import StringIO
+        import sys
+        captured = StringIO()
+        sys.stdout = captured
+        r.display()
+        sys.stdout = sys.__stdout__
+        self.assertEqual(captured.getvalue(), "##\n##\n")
+
+    def test_display_no_y(self):
+        """Tests display without y."""
+        r = Rectangle(2, 2, 1)
+        from io import StringIO
+        import sys
+        captured = StringIO()
+        sys.stdout = captured
+        r.display()
+        sys.stdout = sys.__stdout__
+        self.assertEqual(captured.getvalue(), " ##\n ##\n")
+
+    def test_display_with_x_y(self):
+        """Tests display with x and y."""
+        r = Rectangle(2, 2, 1, 1)
+        from io import StringIO
+        import sys
+        captured = StringIO()
+        sys.stdout = captured
+        r.display()
+        sys.stdout = sys.__stdout__
+        self.assertEqual(captured.getvalue(), "\n ##\n ##\n")
+
+    def test_create_id(self):
+        """Tests create with id only."""
+        r = Rectangle.create(**{'id': 89})
+        self.assertEqual(r.id, 89)
+
+    def test_create_id_width(self):
+        """Tests create with id and width."""
+        r = Rectangle.create(**{'id': 89, 'width': 1})
+        self.assertEqual(r.width, 1)
+
+    def test_create_id_width_height(self):
+        """Tests create with id, width and height."""
+        r = Rectangle.create(**{'id': 89, 'width': 1, 'height': 2})
+        self.assertEqual(r.height, 2)
+
+    def test_create_id_width_height_x(self):
+        """Tests create with id, width, height and x."""
+        r = Rectangle.create(**{'id': 89, 'width': 1, 'height': 2, 'x': 3})
+        self.assertEqual(r.x, 3)
+
+    def test_create_all(self):
+        """Tests create with all attributes."""
+        r = Rectangle.create(
+            **{'id': 89, 'width': 1, 'height': 2, 'x': 3, 'y': 4})
+        self.assertEqual(r.y, 4)
+
+    def test_save_to_file_none(self):
+        """Tests save_to_file with None."""
+        Rectangle.save_to_file(None)
+        with open("Rectangle.json", "r") as f:
+            self.assertEqual(f.read(), "[]")
+
+    def test_save_to_file_empty(self):
+        """Tests save_to_file with empty list."""
+        Rectangle.save_to_file([])
+        with open("Rectangle.json", "r") as f:
+            self.assertEqual(f.read(), "[]")
+
+    def test_save_to_file(self):
+        """Tests save_to_file with one Rectangle."""
+        Rectangle.save_to_file([Rectangle(1, 2)])
+        with open("Rectangle.json", "r") as f:
+            self.assertIn('width', f.read())
+
+    def test_load_from_file_no_file(self):
+        """Tests load_from_file when file doesn't exist."""
+        import os
+        if os.path.exists("Rectangle.json"):
+            os.remove("Rectangle.json")
+        self.assertEqual(Rectangle.load_from_file(), [])
+
+    def test_load_from_file(self):
+        """Tests load_from_file when file exists."""
+        r = Rectangle(1, 2)
+        Rectangle.save_to_file([r])
+        result = Rectangle.load_from_file()
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], Rectangle)
+
 
 if __name__ == "__main__":
     unittest.main()
