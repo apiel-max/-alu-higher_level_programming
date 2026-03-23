@@ -27,3 +27,9 @@ text must be a string
 
 >>> text_indentation("No special chars")
 No special chars
+
+>>> try:
+...     text_indentation()
+... except TypeError as e:
+...     print(e)
+text_indentation() missing 1 required positional argument: 'text'
